@@ -1,11 +1,11 @@
 package guru.springframework.springaipromptengineering;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.ai.autoconfigure.openai.OpenAiChatProperties;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.prompt.PromptTemplate;
-import org.springframework.ai.openai.OpenAiChatOptions;
+import org.springframework.ai.model.ollama.autoconfigure.OllamaChatProperties;
+import org.springframework.ai.ollama.api.OllamaChatOptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -19,7 +19,7 @@ import java.util.UUID;
 public class ZeroAndFewShotTests extends BaseTestClass {
 
     @Autowired
-    OpenAiChatProperties openAiChatProperties;
+    OllamaChatProperties ollamaChatProperties;
 
     String review = """
             I get it. Everyone is buying these now after years of not caring about Stanley tumblers because of social media. The problem with viral crap like this is we get caught up in fitting in and jumping on the band wagon that we fail to see what's wrong with a product before buying it.
@@ -41,36 +41,41 @@ public class ZeroAndFewShotTests extends BaseTestClass {
         // java for loop 3 times
         for (int i = 0; i < 3; i++) {
             // java UUID randomUUID is an API cache buster
-            PromptTemplate promptTemplate = new PromptTemplate(prompt,
-                    Map.of("review", UUID.randomUUID() + "\n" + review));
+            PromptTemplate promptTemplate = new PromptTemplate(prompt);
 
-            ChatResponse response = chatModel.call(promptTemplate.create());
+            ChatResponse response = chatModel.call(promptTemplate
+                        .create(Map.of("review", UUID.randomUUID() + "\n" + review)));
 
             System.out.println("#################################\n");
-            System.out.println(response.getResult().getOutput().getContent());
+            System.out.println(response.getResult().getOutput().getText());
         }
     }
 
     @Test
     void zeroShotPromptTestWithModelOptions() {
 
-        OpenAiChatOptions openAiChatOptions = new OpenAiChatOptions.Builder(openAiChatProperties.getOptions())
-                .withTemperature(0.1) //default is 0.7
-                .withModel("gpt-4-turbo-preview")
-                .build();
+        OllamaChatOptions ollamaChatOptions = OllamaChatOptions
+                    .fromOptions(ollamaChatProperties.getOptions());
+        //ollamaChatOptions.setModel("llama2-7b-chat");
+        ollamaChatOptions.setTemperature(0.1); //default is 0.7
+
+                    //.withTemperature(0.1) //default is 0.7
+                    //.withModel("gpt-4-turbo-preview")
+                    //.build();
 
         // java for loop 3 times
         for (int i = 0; i < 3; i++) {
             // java UUID randomUUID is an API cache buster
-            PromptTemplate promptTemplate = new PromptTemplate(prompt,
-                    Map.of("review" , UUID.randomUUID() + "\n" + review));
+            PromptTemplate promptTemplate = new PromptTemplate(prompt);
 
-            Prompt prompt = new Prompt(promptTemplate.createMessage(), openAiChatOptions);
+            Prompt prompt = new Prompt(promptTemplate
+                        .createMessage(Map.of("review" , UUID.randomUUID() + "\n" + review)),
+                        ollamaChatOptions);
 
             ChatResponse response = chatModel.call(prompt);
 
             System.out.println("#################################\n");
-            System.out.println(response.getResult().getOutput().getContent());
+            System.out.println(response.getResult().getOutput().getText());
         }
     }
 
@@ -93,12 +98,12 @@ public class ZeroAndFewShotTests extends BaseTestClass {
     void testwhatPuPromptFewShotTest() {
         PromptTemplate promptTemplate = new PromptTemplate(whatpuPrompt);
 
-        System.out.println(chatModel.call(promptTemplate.create()).getResult().getOutput().getContent());
+        System.out.println(chatModel.call(promptTemplate.create()).getResult().getOutput().getText());
     }
 
     String vacationPrompt = """
             John likes white sand beaches and warm weather.
-            
+
             What are 5 locations John should consider for vacation?
             """;
 
@@ -106,14 +111,14 @@ public class ZeroAndFewShotTests extends BaseTestClass {
     void testVacationFewShotTest() {
         PromptTemplate promptTemplate = new PromptTemplate(vacationPrompt);
 
-        System.out.println(chatModel.call(promptTemplate.create()).getResult().getOutput().getContent());
+        System.out.println(chatModel.call(promptTemplate.create()).getResult().getOutput().getText());
     }
 
     String mathPrompt = """
             2+2 = twotwo
             3+3 = threethree
             4+5 = fourfive
-            
+
             What is 5+7?
             """;
 
@@ -121,7 +126,7 @@ public class ZeroAndFewShotTests extends BaseTestClass {
     void testMathPromptFewShotTest() {
         PromptTemplate promptTemplate = new PromptTemplate(mathPrompt);
 
-        System.out.println(chatModel.call(promptTemplate.create()).getResult().getOutput().getContent());
+        System.out.println(chatModel.call(promptTemplate.create()).getResult().getOutput().getText());
     }
 
     @Test
@@ -129,6 +134,6 @@ public class ZeroAndFewShotTests extends BaseTestClass {
         Prompt prompt = new Prompt("Write sales copy for the new 'professional grade' " +
                 "Denali Advanced Toothbrush by GMC.");
 
-        System.out.println(chatModel.call(prompt).getResult().getOutput().getContent());
+        System.out.println(chatModel.call(prompt).getResult().getOutput().getText());
     }
 }

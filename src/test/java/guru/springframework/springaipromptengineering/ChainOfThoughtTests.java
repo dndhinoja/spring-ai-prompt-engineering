@@ -1,10 +1,10 @@
 package guru.springframework.springaipromptengineering;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.ai.autoconfigure.openai.OpenAiChatProperties;
 
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.PromptTemplate;
+import org.springframework.ai.model.ollama.autoconfigure.OllamaChatProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
@@ -13,8 +13,12 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public class ChainOfThoughtTests extends BaseTestClass {
 
+//    @Autowired
+//    OpenAiChatProperties openAiChatProperties;
+
     @Autowired
-    OpenAiChatProperties openAiChatProperties;
+    OllamaChatProperties ollamaChatProperties;
+
 
     /*
       Chain of thought - adding a series of intermediate reasoning steps to the prompt.
@@ -32,7 +36,8 @@ public class ChainOfThoughtTests extends BaseTestClass {
         ChatResponse response = chatModel.call(promptTemplate.create());
 
         //models previously would answer 27
-        System.out.println(response.getResult().getOutput().getContent());
+        System.out.println(response.getResult().getOutput().getText());
+        //System.out.println(response.getResult().getOutput().getContent());
     }
 
     @Test
@@ -51,7 +56,8 @@ public class ChainOfThoughtTests extends BaseTestClass {
 
         ChatResponse response = chatModel.call(promptTemplate.create());
 
-        System.out.println(response.getResult().getOutput().getContent());
+        System.out.println(response.getResult().getOutput().getText());
+        //System.out.println(response.getResult().getOutput().getContent());
     }
 
     @Test
@@ -66,6 +72,7 @@ public class ChainOfThoughtTests extends BaseTestClass {
         ChatResponse response = chatModel.call(promptTemplate.create());
 
         //models previously would answer 27
-        System.out.println(response.getResult().getOutput().getContent());
+        System.out.println(response.getResult().getOutput().getText());
+        //System.out.println(response.getResult().getOutput().getContent());
     }
 }

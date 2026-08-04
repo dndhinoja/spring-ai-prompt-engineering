@@ -4,8 +4,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.prompt.PromptTemplate;
-import org.springframework.ai.model.openai.autoconfigure.OpenAiChatProperties;
-import org.springframework.ai.openai.OpenAiChatOptions;
+import org.springframework.ai.model.ollama.autoconfigure.OllamaChatProperties;
+import org.springframework.ai.ollama.api.OllamaChatOptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -17,6 +17,9 @@ import java.util.UUID;
  */
 @SpringBootTest
 public class ZeroAndFewShotTests extends BaseTestClass {
+
+    @Autowired
+    OllamaChatProperties ollamaChatProperties;
 
     String review = """
             I get it. Everyone is buying these now after years of not caring about Stanley tumblers because of social media.
@@ -50,7 +53,8 @@ public class ZeroAndFewShotTests extends BaseTestClass {
             // java UUID randomUUID is an API cache buster
             PromptTemplate promptTemplate = new PromptTemplate(prompt);
 
-            ChatResponse response = chatModel.call(promptTemplate.create(Map.of("review", UUID.randomUUID() + "\n" + review)));
+            ChatResponse response = chatModel.call(promptTemplate
+                        .create(Map.of("review", UUID.randomUUID() + "\n" + review)));
 
             System.out.println("#################################\n");
             System.out.println(response.getResult().getOutput().getText());
@@ -60,20 +64,23 @@ public class ZeroAndFewShotTests extends BaseTestClass {
     @Test
     void zeroShotPromptTestWithModelOptions() {
 
-        //DEFAULT_CHAT_MODEL in 1.0.0 = "gpt-4o-mini"
-        // other models at time of recording: gpt-4o, gpt-4.1, gpt-4.1-nano (fastest - cheapest), gpt-4.1-mini (faster - cheaper)
+        OllamaChatOptions ollamaChatOptions = OllamaChatOptions
+                    .fromOptions(ollamaChatProperties.getOptions());
+        //ollamaChatOptions.setModel("llama2-7b-chat");
+        ollamaChatOptions.setTemperature(0.1); //default is 0.7
 
-        OpenAiChatOptions openAiChatOptions = OpenAiChatOptions.builder()
-               // .temperature(1.2) //default is 0.7, lower is more deterministic, higher is more creative
-                .model("gpt-4o")
-                .build();
+                    //.withTemperature(0.1) //default is 0.7
+                    //.withModel("gpt-4-turbo-preview")
+                    //.build();
 
         // java for loop 3 times
         for (int i = 0; i < 3; i++) {
             // java UUID randomUUID is an API cache buster
             PromptTemplate promptTemplate = new PromptTemplate(prompt);
 
-            Prompt prompt = new Prompt(promptTemplate.createMessage(Map.of("review" , UUID.randomUUID() + "\n" + review)), openAiChatOptions);
+            Prompt prompt = new Prompt(promptTemplate
+                        .createMessage(Map.of("review" , UUID.randomUUID() + "\n" + review)),
+                        ollamaChatOptions);
 
             ChatResponse response = chatModel.call(prompt);
 

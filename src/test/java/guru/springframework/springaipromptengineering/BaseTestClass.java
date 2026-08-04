@@ -21,6 +21,7 @@ public class BaseTestClass {
         Prompt promptToSend = promptTemplate.create();
 
         return chatModel.call(promptToSend).getResult().getOutput().getText();
+        //return chatModel.call(promptToSend).getResult().getOutput().getContent();
     }
 
 }

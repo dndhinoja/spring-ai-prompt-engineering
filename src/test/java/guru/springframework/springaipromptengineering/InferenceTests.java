@@ -61,11 +61,11 @@ public class InferenceTests extends BaseTestClass {
         PromptTemplate promptTemplate = new PromptTemplate(sentimentPrompt);
 
         System.out.println(chatModel.call(promptTemplate.create(Map.of("review1", review1,
-                "review2", review2,
-                "review3", review3,
-                "review4", review4,
-                "review5", review5,
-                "review6", review6))).getResult().getOutput().getText());
+                    "review2", review2,
+                    "review3", review3,
+                    "review4", review4,
+                    "review5", review5,
+                    "review6", review6))).getResult().getOutput().getText());
     }
 
     String emotionPrompt = """
@@ -85,11 +85,11 @@ public class InferenceTests extends BaseTestClass {
         PromptTemplate promptTemplate = new PromptTemplate(emotionPrompt);
 
         System.out.println(chatModel.call(promptTemplate.create(Map.of("review1", review1,
-                "review2", review2,
-                "review3", review3,
-                "review4", review4,
-                "review5", review5,
-                "review6", review6))).getResult().getOutput().getText());
+                    "review2", review2,
+                    "review3", review3,
+                    "review4", review4,
+                    "review5", review5,
+                    "review6", review6))).getResult().getOutput().getText());
     }
 
     String angerTestPrompt = """
@@ -115,11 +115,11 @@ public class InferenceTests extends BaseTestClass {
         PromptTemplate promptTemplate = new PromptTemplate(angerTestPrompt);
 
         System.out.println(chatModel.call(promptTemplate.create(Map.of("review1", review1,
-                "review2", review2,
-                "review3", review3,
-                "review4", review4,
-                "review5", review5,
-                "review6", review6))).getResult().getOutput().getText());
+                    "review2", review2,
+                    "review3", review3,
+                    "review4", review4,
+                    "review5", review5,
+                    "review6", review6))).getResult().getOutput().getText());
     }
 
     String story = """
